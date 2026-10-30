@@ -115,14 +115,25 @@
 
     .status-badge {
       font-size: 11.5px;
-      color: #64748b;
-      background: #f1f5f9;
       padding: 3px 8px;
       border-radius: 4px;
-      max-width: 250px;
+      max-width: 280px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .status-badge.empty {
+      color: #b45309;
+      background: #fef3c7;
+      border: 1px solid #fde68a;
+    }
+
+    .status-badge.loaded {
+      color: #15803d;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
     }
 
     select {
@@ -144,6 +155,16 @@
       height: 20px;
       background: #e2e8f0;
       margin: 0 4px;
+    }
+
+    /* Banner Notifikasi Data Kosong */
+    .empty-banner {
+      background: #eff6ff;
+      border-bottom: 1px solid #bfdbfe;
+      color: #1e40af;
+      padding: 8px 18px;
+      font-size: 12.5px;
+      text-align: center;
     }
 
     /* ================= MODAL DIALOG PENGATURAN ================= */
@@ -254,7 +275,6 @@
       color: #0284c7;
     }
 
-    /* List Item Mapel Dinamis */
     .mapel-list {
       display: flex;
       flex-direction: column;
@@ -502,6 +522,7 @@
     .nilai-table th, .nilai-table td {
       border: 1px solid #000;
       padding: 4px 6px;
+      height: 24px;
     }
 
     .nilai-table th {
@@ -548,7 +569,7 @@
         background: #fff !important;
       }
 
-      .no-print, .modal-overlay {
+      .no-print, .modal-overlay, .empty-banner {
         display: none !important;
       }
 
@@ -593,18 +614,18 @@
           📥 Template
         </button>
 
-        <span class="status-badge" id="fileStatus">Data lampiran 1 siap digunakan</span>
+        <span class="status-badge empty" id="fileStatus">⚠️ Belum ada file Excel diunggah (Data kosong)</span>
       </div>
 
       <div class="tool-group">
         <label for="studentSelect" style="font-size: 12.5px; font-weight: 600; color: #475569;">Siswa:</label>
         <select id="studentSelect" onchange="renderSelectedStudent()">
-          <option value="ALL">-- Cetak Semua Siswa --</option>
+          <option value="">-- Menunggu Impor File Excel --</option>
         </select>
 
         <div class="divider-v"></div>
 
-        <button class="btn-frameless text-blue" onclick="window.print()" title="Cetak Rapor ke Printer / PDF">
+        <button class="btn-frameless text-blue" onclick="handlePrintButtonClick()" title="Cetak Rapor ke Printer / PDF">
           🖨️ Cetak
         </button>
 
@@ -613,6 +634,11 @@
         </button>
       </div>
     </div>
+  </div>
+
+  <!-- Banner Notifikasi Saat Data Belum Diunggah -->
+  <div class="empty-banner no-print" id="emptyNotice">
+    ℹ️ <strong>Data Nilai Masih Kosong</strong> — Silakan klik tombol <strong>📁 Impor Excel</strong> di bilah atas untuk mengunggah file leger nilai (contoh: <code>legersaya.xlsx</code>).
   </div>
 
   <!-- ================= KOTAK MODAL PENGATURAN ================= -->
@@ -757,7 +783,7 @@
   <div class="rapor-wrapper" id="raporContainer"></div>
 
   <script>
-    // Konfigurasi Default lengkap dengan daftar mapel dinamis
+    // Konfigurasi Default
     const DEFAULT_CONFIG = {
       judul1: "RAPOR PENILAIAN ASESSMEN TENGAH SEMESTER GANJIL",
       judul2: "TAHUN AJARAN 2026/2027",
@@ -776,7 +802,7 @@
       tanggalCetak: "Sentani, 3 November 2026",
       waliKelas: "Eko Yudhi Susilo,S.T",
       nip: "197712172022211003",
-      // List mata pelajaran dinamis
+      // List mata pelajaran standar
       subjects: [
         { code: "AGAMA", name: "Pendidikan Agama dan Budi Pekerti", group: "A" },
         { code: "PKN", name: "Pendidikan Pancasila", group: "A" },
@@ -793,6 +819,9 @@
     };
 
     let appConfig = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
+
+    // Data Siswa dimulai dari KOSONG (Belum diimpor)
+    let studentsData = [];
 
     function loadSavedConfig() {
       const saved = localStorage.getItem('rapor_custom_settings');
@@ -813,24 +842,6 @@
       localStorage.setItem('rapor_custom_settings', JSON.stringify(appConfig));
     }
 
-    // Data awal 14 siswa sesuai legersaya.xlsx
-    let studentsData = [
-      { no: 1, nisn: "3107810534", nama: "AHMAD", jk: "L", nilai: { "AGAMA": 90, "PKN": 78, "B.INDO": 75, "PJOK": 86, "SEJRH": 85, "MTK": 50, "BING": 65, "PILIHAN": 70, "DASAR2": 75, "KKA": 95, "MULOK": 92 }, jml: 861, rt: "78,27" },
-      { no: 2, nisn: "105296042", nama: "ALFRIDA FIFIANA PSEBO", jk: "P", nilai: { "AGAMA": 80, "PKN": 80, "B.INDO": 76, "PJOK": 85, "SEJRH": 90, "MTK": 65, "BING": 65, "PILIHAN": 55, "DASAR2": 75, "KKA": 95, "MULOK": 85 }, jml: 851, rt: "77,36" },
-      { no: 3, nisn: "81437364", nama: "AMOROK GWIJANGGE", jk: "L", nilai: { "AGAMA": 75, "PKN": 50, "B.INDO": "", "PJOK": "", "SEJRH": 80, "MTK": 40, "BING": "", "PILIHAN": "", "DASAR2": 75, "KKA": "", "MULOK": 72 }, jml: 392, rt: "65,33" },
-      { no: 4, nisn: "3091548067", nama: "ARNOLDUS YANSEN SUBAN RURON", jk: "L", nilai: { "AGAMA": 66, "PKN": 75, "B.INDO": 65, "PJOK": 50, "SEJRH": 80, "MTK": 55, "BING": 65, "PILIHAN": 50, "DASAR2": 75, "KKA": 75, "MULOK": 72 }, jml: 728, rt: "66,18" },
-      { no: 5, nisn: "45522202", nama: "BUNGA K. APRILIA SOKOY", jk: "P", nilai: { "AGAMA": 80, "PKN": 80, "B.INDO": 85, "PJOK": 85, "SEJRH": 90, "MTK": 70, "BING": 65, "PILIHAN": 73, "DASAR2": 75, "KKA": 95, "MULOK": 98 }, jml: 896, rt: "81,45" },
-      { no: 6, nisn: "84037345", nama: "ESAU AKORWA WAKAPOK", jk: "L", nilai: { "AGAMA": 75, "PKN": 60, "B.INDO": "", "PJOK": 75, "SEJRH": 80, "MTK": 35, "BING": 65, "PILIHAN": 45, "DASAR2": 75, "KKA": 50, "MULOK": 75 }, jml: 635, rt: "63,50" },
-      { no: 7, nisn: "98384010", nama: "FEBIOLA TAIME", jk: "P", nilai: { "AGAMA": 80, "PKN": 80, "B.INDO": 75, "PJOK": 85, "SEJRH": 90, "MTK": 60, "BING": 65, "PILIHAN": 65, "DASAR2": 75, "KKA": 95, "MULOK": 95 }, jml: 865, rt: "78,64" },
-      { no: 8, nisn: "97356248", nama: "HENDRIK MANUFANDU", jk: "L", nilai: { "AGAMA": "", "PKN": 40, "B.INDO": 60, "PJOK": 50, "SEJRH": 80, "MTK": 40, "BING": 65, "PILIHAN": 50, "DASAR2": 75, "KKA": 60, "MULOK": 90 }, jml: 610, rt: "61,00" },
-      { no: 9, nisn: "31B8259889", nama: "LINDA NOVA SOMNOF", jk: "P", nilai: { "AGAMA": 80, "PKN": 70, "B.INDO": "", "PJOK": 65, "SEJRH": 90, "MTK": 55, "BING": 65, "PILIHAN": 50, "DASAR2": 75, "KKA": 80, "MULOK": 95 }, jml: 725, rt: "72,50" },
-      { no: 10, nisn: "5598301", nama: "NIMIANUS YOMAN", jk: "L", nilai: { "AGAMA": 80, "PKN": 40, "B.INDO": 70, "PJOK": "", "SEJRH": 80, "MTK": 45, "BING": "", "PILIHAN": "", "DASAR2": 75, "KKA": 70, "MULOK": "" }, jml: 460, rt: "65,71" },
-      { no: 11, nisn: "71683456", nama: "PETRUS MIKAN", jk: "L", nilai: { "AGAMA": "", "PKN": 40, "B.INDO": "", "PJOK": "", "SEJRH": 80, "MTK": 35, "BING": 65, "PILIHAN": 30, "DASAR2": 75, "KKA": 70, "MULOK": 60 }, jml: 455, rt: "56,88" },
-      { no: 12, nisn: "3074872146", nama: "YANTO ODBAN", jk: "L", nilai: { "AGAMA": 80, "PKN": 80, "B.INDO": 80, "PJOK": 85, "SEJRH": 90, "MTK": 70, "BING": 65, "PILIHAN": 70, "DASAR2": 75, "KKA": 95, "MULOK": 95 }, jml: 885, rt: "80,45" },
-      { no: 13, nisn: "3098938223", nama: "YOLINA DORIJE", jk: "P", nilai: { "AGAMA": "", "PKN": "", "B.INDO": "", "PJOK": 75, "SEJRH": 80, "MTK": "", "BING": "", "PILIHAN": "", "DASAR2": "", "KKA": "", "MULOK": "" }, jml: 155, rt: "77,50" },
-      { no: 14, nisn: "93183512", nama: "YOSEP HEIN PULALO", jk: "L", nilai: { "AGAMA": "", "PKN": 75, "B.INDO": "", "PJOK": 50, "SEJRH": 80, "MTK": 55, "BING": 65, "PILIHAN": 50, "DASAR2": 75, "KKA": 50, "MULOK": 65 }, jml: 565, rt: "62,78" }
-    ];
-
     function getKeterangan(val) {
       if (val === "" || val === null || val === undefined) {
         return appConfig.ketNol;
@@ -845,6 +856,14 @@
       } else {
         return appConfig.ketKompeten;
       }
+    }
+
+    function handlePrintButtonClick() {
+      if (studentsData.length === 0) {
+        alert("Perhatian: Data nilai masih kosong! Silakan impor file Excel leger terlebih dahulu sebelum mencetak.");
+        return;
+      }
+      window.print();
     }
 
     // ================= FUNGSI DOWNLOAD TEMPLATE EXCEL DINAMIS =================
@@ -1009,7 +1028,21 @@
 
     function populateStudentDropdown() {
       const select = document.getElementById('studentSelect');
-      select.innerHTML = '<option value="ALL">-- Cetak Semua Siswa --</option>';
+      select.innerHTML = '';
+
+      if (studentsData.length === 0) {
+        const opt = document.createElement('option');
+        opt.value = "";
+        opt.textContent = "-- Menunggu Impor File Excel --";
+        select.appendChild(opt);
+        return;
+      }
+
+      const optAll = document.createElement('option');
+      optAll.value = "ALL";
+      optAll.textContent = "-- Cetak Semua Siswa --";
+      select.appendChild(optAll);
+
       studentsData.forEach((s, idx) => {
         const opt = document.createElement('option');
         opt.value = idx;
@@ -1023,19 +1056,26 @@
       const container = document.getElementById('raporContainer');
       container.innerHTML = '';
 
-      if (selectValue === 'ALL') {
+      // JIKA DATA EXCEL BELUM DIUNGGAH -> TAMPILKAN FORMAT KOSONG
+      if (studentsData.length === 0) {
+        container.appendChild(createRaporPageElement(null, true));
+        return;
+      }
+
+      if (selectValue === 'ALL' || selectValue === '') {
         studentsData.forEach(student => {
-          container.appendChild(createRaporPageElement(student));
+          container.appendChild(createRaporPageElement(student, false));
         });
       } else {
         const student = studentsData[parseInt(selectValue)];
         if (student) {
-          container.appendChild(createRaporPageElement(student));
+          container.appendChild(createRaporPageElement(student, false));
         }
       }
     }
 
-    function createRaporPageElement(student) {
+    // Fungsi membuat elemen satu halaman Rapor
+    function createRaporPageElement(student, isPlaceholder = false) {
       const page = document.createElement('div');
       page.className = 'page';
 
@@ -1046,9 +1086,15 @@
       const mapelA = appConfig.subjects.filter(s => s.group === 'A');
       mapelA.forEach(sub => {
         const key = sub.code.toUpperCase();
-        const rawVal = student.nilai[key];
-        const displayVal = (rawVal !== undefined && rawVal !== null && rawVal !== "") ? rawVal : (rawVal === 0 ? 0 : "");
-        const ket = getKeterangan(rawVal);
+        let displayVal = "";
+        let ket = "";
+
+        // Hanya isi nilai jika BUKAN mode placeholder kosong
+        if (!isPlaceholder && student && student.nilai) {
+          const rawVal = student.nilai[key];
+          displayVal = (rawVal !== undefined && rawVal !== null && rawVal !== "") ? rawVal : (rawVal === 0 ? 0 : "");
+          ket = getKeterangan(rawVal);
+        }
 
         rowsA += `
           <tr>
@@ -1063,9 +1109,14 @@
       const mapelB = appConfig.subjects.filter(s => s.group === 'B');
       mapelB.forEach(sub => {
         const key = sub.code.toUpperCase();
-        const rawVal = student.nilai[key];
-        const displayVal = (rawVal !== undefined && rawVal !== null && rawVal !== "") ? rawVal : (rawVal === 0 ? 0 : "");
-        const ket = getKeterangan(rawVal);
+        let displayVal = "";
+        let ket = "";
+
+        if (!isPlaceholder && student && student.nilai) {
+          const rawVal = student.nilai[key];
+          displayVal = (rawVal !== undefined && rawVal !== null && rawVal !== "") ? rawVal : (rawVal === 0 ? 0 : "");
+          ket = getKeterangan(rawVal);
+        }
 
         rowsB += `
           <tr>
@@ -1076,6 +1127,12 @@
           </tr>
         `;
       });
+
+      // Data Siswa: Jika belum diupload, tampilkan kosong
+      const studentNama = (!isPlaceholder && student) ? student.nama : "";
+      const studentNisn = (!isPlaceholder && student) ? student.nisn : "";
+      const studentJml = (!isPlaceholder && student && student.jml !== undefined) ? student.jml : "";
+      const studentRt = (!isPlaceholder && student && student.rt !== undefined) ? student.rt : "";
 
       page.innerHTML = `
         <!-- KOP SURAT -->
@@ -1105,7 +1162,7 @@
           <tr>
             <td class="col-lbl-left">Nama Peserta Didik</td>
             <td class="col-colon">:</td>
-            <td class="col-val-left text-bold">${student.nama}</td>
+            <td class="col-val-left text-bold">${studentNama}</td>
             <td class="col-lbl-right">Kelas</td>
             <td class="col-colon">:</td>
             <td class="col-val-right">${appConfig.kelas}</td>
@@ -1113,7 +1170,7 @@
           <tr>
             <td class="col-lbl-left">Nomor Induk/NISN</td>
             <td class="col-colon">:</td>
-            <td class="col-val-left">${student.nisn}</td>
+            <td class="col-val-left">${studentNisn}</td>
             <td class="col-lbl-right">Fase</td>
             <td class="col-colon">:</td>
             <td class="col-val-right">${appConfig.fase}</td>
@@ -1167,12 +1224,12 @@
             ${rowsB}
             <tr>
               <td colspan="2" class="text-center text-bold" style="padding: 5px;">Jumlah Nilai</td>
-              <td class="text-center text-bold">${student.jml || ''}</td>
+              <td class="text-center text-bold">${studentJml}</td>
               <td></td>
             </tr>
             <tr>
               <td colspan="2" class="text-center text-bold" style="padding: 5px;">Rata-Rata Nilai</td>
-              <td class="text-center text-bold">${student.rt || ''}</td>
+              <td class="text-center text-bold">${studentRt}</td>
               <td></td>
             </tr>
           </tbody>
@@ -1203,7 +1260,8 @@
       const file = event.target.files[0];
       if (!file) return;
 
-      document.getElementById('fileStatus').textContent = `Membaca: ${file.name}...`;
+      const fileStatusBadge = document.getElementById('fileStatus');
+      fileStatusBadge.textContent = `Membaca: ${file.name}...`;
 
       const reader = new FileReader();
       reader.onload = function(e) {
@@ -1217,8 +1275,9 @@
           parseExcelData(rawData, file.name);
         } catch (err) {
           console.error(err);
-          alert("Gagal membaca file Excel. Pastikan format tabel sesuai dengan legersaya.xlsx!");
-          document.getElementById('fileStatus').textContent = "Format tidak valid!";
+          alert("Gagal membaca file Excel. Pastikan format tabel sesuai!");
+          fileStatusBadge.className = 'status-badge empty';
+          fileStatusBadge.textContent = "Format tidak valid!";
         }
       };
       reader.readAsArrayBuffer(file);
@@ -1344,11 +1403,20 @@
 
       if (newStudents.length > 0) {
         studentsData = newStudents;
+        
+        // Perbarui status dan sembunyikan banner kosong
+        const fileStatusBadge = document.getElementById('fileStatus');
+        fileStatusBadge.className = 'status-badge loaded';
+        
         let notifMsg = `Aktif: ${fileName} (${studentsData.length} siswa)`;
         if (newSubjectsDetected.length > 0) {
-          notifMsg += ` - Terdeteksi mapel baru: ${newSubjectsDetected.join(', ')}`;
+          notifMsg += ` - Mapel baru: ${newSubjectsDetected.join(', ')}`;
         }
-        document.getElementById('fileStatus').textContent = notifMsg;
+        fileStatusBadge.textContent = notifMsg;
+
+        const emptyNotice = document.getElementById('emptyNotice');
+        if (emptyNotice) emptyNotice.style.display = 'none';
+
         populateStudentDropdown();
         renderSelectedStudent();
       }
