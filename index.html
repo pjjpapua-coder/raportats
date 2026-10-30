@@ -28,7 +28,7 @@
 
     /* ================= TOOLBAR WARNA HITAM & KONTRAS TINGGI ================= */
     .no-print {
-      background: #0f172a; /* Warna Hitam Pekat Elegan */
+      background: #0f172a;
       border-bottom: 1px solid #1e293b;
       padding: 10px 20px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.3);
@@ -99,7 +99,7 @@
     }
 
     .btn-frameless.text-blue {
-      color: #38bdf8; /* Biru terang kontras */
+      color: #38bdf8;
     }
     .btn-frameless.text-blue:hover {
       background: rgba(56, 189, 248, 0.15);
@@ -107,7 +107,7 @@
     }
 
     .btn-frameless.text-green {
-      color: #4ade80; /* Hijau cerah kontras */
+      color: #4ade80;
     }
     .btn-frameless.text-green:hover {
       background: rgba(74, 222, 128, 0.15);
@@ -115,7 +115,7 @@
     }
 
     .btn-frameless.text-slate {
-      color: #e2e8f0; /* Putih keperakan kontras */
+      color: #e2e8f0;
     }
     .btn-frameless.text-slate:hover {
       background: rgba(255, 255, 255, 0.15);
@@ -144,13 +144,13 @@
     }
 
     .status-badge.empty {
-      color: #fde047; /* Kuning cerah */
+      color: #fde047;
       background: rgba(234, 179, 8, 0.15);
       border: 1px solid rgba(234, 179, 8, 0.35);
     }
 
     .status-badge.loaded {
-      color: #4ade80; /* Hijau segar */
+      color: #4ade80;
       background: rgba(34, 197, 94, 0.15);
       border: 1px solid rgba(34, 197, 94, 0.35);
     }
@@ -704,9 +704,9 @@
           </div>
         </div>
 
-        <!-- 2. Data Sekolah & Kelas -->
+        <!-- 2. Data Sekolah, Keahlian & Kelas -->
         <div class="modal-section">
-          <div class="modal-section-title">🏫 Data Sekolah & Kelas</div>
+          <div class="modal-section-title">🏫 Data Sekolah, Keahlian & Kelas</div>
           <div class="form-grid-2" style="margin-top: 8px; margin-bottom: 8px;">
             <div class="form-group">
               <label>Nama Sekolah:</label>
@@ -715,6 +715,17 @@
             <div class="form-group">
               <label>Alamat Sekolah:</label>
               <input type="text" id="cfg_alamatSekolah">
+            </div>
+          </div>
+          <!-- Input Program Keahlian & Konsentrasi Keahlian -->
+          <div class="form-grid-2" style="margin-bottom: 8px;">
+            <div class="form-group">
+              <label>Program Keahlian:</label>
+              <input type="text" id="cfg_programKeahlian">
+            </div>
+            <div class="form-group">
+              <label>Konsentrasi Keahlian:</label>
+              <input type="text" id="cfg_konsentrasiKeahlian">
             </div>
           </div>
           <div class="form-grid-2">
@@ -983,6 +994,8 @@
       document.getElementById('cfg_judul2').value = appConfig.judul2;
       document.getElementById('cfg_sekolah').value = appConfig.sekolah;
       document.getElementById('cfg_alamatSekolah').value = appConfig.alamatSekolah;
+      document.getElementById('cfg_programKeahlian').value = appConfig.programKeahlian;
+      document.getElementById('cfg_konsentrasiKeahlian').value = appConfig.konsentrasiKeahlian;
       document.getElementById('cfg_kelas').value = appConfig.kelas;
       document.getElementById('cfg_fase').value = appConfig.fase;
       document.getElementById('cfg_semester').value = appConfig.semester;
@@ -1008,6 +1021,8 @@
       appConfig.judul2 = document.getElementById('cfg_judul2').value.trim();
       appConfig.sekolah = document.getElementById('cfg_sekolah').value.trim();
       appConfig.alamatSekolah = document.getElementById('cfg_alamatSekolah').value.trim();
+      appConfig.programKeahlian = document.getElementById('cfg_programKeahlian').value.trim();
+      appConfig.konsentrasiKeahlian = document.getElementById('cfg_konsentrasiKeahlian').value.trim();
       appConfig.kelas = document.getElementById('cfg_kelas').value.trim();
       appConfig.fase = document.getElementById('cfg_fase').value.trim();
       appConfig.semester = document.getElementById('cfg_semester').value.trim();
@@ -1045,7 +1060,7 @@
       saveConfigToStorage();
       closeConfigModal();
       renderSelectedStudent();
-      alert("✅ Pengaturan dan daftar mata pelajaran berhasil disimpan!");
+      alert("✅ Pengaturan berhasil disimpan ke browser!");
     }
 
     function resetConfigToDefault() {
