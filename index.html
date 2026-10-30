@@ -28,7 +28,7 @@
 
     /* ================= TOOLBAR WARNA HITAM & KONTRAS TINGGI ================= */
     .no-print {
-      background: #0f172a;
+      background: #0f172a; /* Warna Hitam Pekat Elegan */
       border-bottom: 1px solid #1e293b;
       padding: 10px 20px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.3);
@@ -99,7 +99,7 @@
     }
 
     .btn-frameless.text-blue {
-      color: #38bdf8;
+      color: #38bdf8; /* Biru terang kontras */
     }
     .btn-frameless.text-blue:hover {
       background: rgba(56, 189, 248, 0.15);
@@ -107,7 +107,7 @@
     }
 
     .btn-frameless.text-green {
-      color: #4ade80;
+      color: #4ade80; /* Hijau cerah kontras */
     }
     .btn-frameless.text-green:hover {
       background: rgba(74, 222, 128, 0.15);
@@ -115,7 +115,7 @@
     }
 
     .btn-frameless.text-slate {
-      color: #e2e8f0;
+      color: #e2e8f0; /* Putih keperakan kontras */
     }
     .btn-frameless.text-slate:hover {
       background: rgba(255, 255, 255, 0.15);
@@ -144,13 +144,13 @@
     }
 
     .status-badge.empty {
-      color: #fde047;
+      color: #fde047; /* Kuning cerah */
       background: rgba(234, 179, 8, 0.15);
       border: 1px solid rgba(234, 179, 8, 0.35);
     }
 
     .status-badge.loaded {
-      color: #4ade80;
+      color: #4ade80; /* Hijau segar */
       background: rgba(34, 197, 94, 0.15);
       border: 1px solid rgba(34, 197, 94, 0.35);
     }
@@ -657,7 +657,7 @@
         ⭐ Raport ATS Creator by <span class="creator">Eko Yudhi Susilo, S.T, Gr</span>
       </div>
 
-      <!-- Grup Kanan: Pilihan Siswa, Cetak & Pengaturan -->
+      <!-- Grup Kanan: Pilihan Siswa, Cetak, Pengaturan & Tutorial -->
       <div class="tool-group">
         <label for="studentSelect" class="lbl-siswa">Siswa:</label>
         <select id="studentSelect" class="select-dark" onchange="renderSelectedStudent()">
@@ -672,6 +672,15 @@
 
         <button class="btn-frameless text-slate" onclick="openConfigModal()" title="Buka pengaturan data dan mata pelajaran">
           ⚙️ Pengaturan
+        </button>
+
+        <!-- Icon Tanpa Bingkai dan Tanpa Label untuk Tutorial -->
+        <button class="btn-frameless text-slate" onclick="openTutorialModal()" title="Panduan & Tutorial Penggunaan Aplikasi" aria-label="Tutorial" style="padding: 6px 8px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
         </button>
       </div>
     </div>
@@ -717,7 +726,6 @@
               <input type="text" id="cfg_alamatSekolah">
             </div>
           </div>
-          <!-- Input Program Keahlian & Konsentrasi Keahlian -->
           <div class="form-grid-2" style="margin-bottom: 8px;">
             <div class="form-group">
               <label>Program Keahlian:</label>
@@ -827,6 +835,116 @@
           <button class="btn-frameless" onclick="closeConfigModal()" style="color: #64748b;">Batal</button>
           <button class="btn-solid" onclick="saveConfigFromModal()">💾 Simpan ke Browser</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= KOTAK MODAL TUTORIAL DETAIL ================= -->
+  <div class="modal-overlay" id="tutorialModal">
+    <div class="modal-content" style="max-width: 860px;">
+      <div class="modal-header" style="background: #0f172a; color: #fff; border-bottom: 1px solid #1e293b;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 20px;">📖</span>
+          <h3 style="color: #fff; margin: 0; font-size: 16px;">Panduan & Tutorial Penggunaan Aplikasi</h3>
+        </div>
+        <button class="modal-close-btn" onclick="closeTutorialModal()" style="color: #94a3b8;">&times;</button>
+      </div>
+
+      <div class="modal-body" style="padding: 20px 24px; gap: 20px; font-size: 13.5px; line-height: 1.6; color: #334155;">
+        <!-- Intro -->
+        <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 12px 16px; border-radius: 0 8px 8px 0;">
+          <strong>Selamat datang di Raport ATS Creator!</strong><br>
+          Aplikasi ini dirancang untuk memudahkan bapak/ibu guru dan wali kelas dalam mengonversi data nilai dari leger Excel secara otomatis menjadi lembaran Rapor Penilaian Asesmen Tengah Semester (ATS) yang siap dicetak maupun disimpan ke format PDF.
+        </div>
+
+        <!-- Langkah-langkah -->
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          
+          <div style="display: flex; gap: 14px; align-items: flex-start;">
+            <div style="background: #1e3a8a; color: #fff; font-weight: bold; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 13px;">1</div>
+            <div style="flex: 1;">
+              <h4 style="margin: 0 0 4px 0; color: #0f172a; font-size: 14px;">Unduh Format Template Excel</h4>
+              <p style="margin: 0; color: #475569;">
+                Jika belum memiliki format leger yang sesuai, klik tombol <strong>📥 Template</strong> di bilah atas. Sistem akan mengunduh file <code>template_leger_nilai.xlsx</code> yang kolom-kolom mata pelajarannya sudah otomatis disinkronkan dengan pengaturan saat ini.
+              </p>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 14px; align-items: flex-start;">
+            <div style="background: #1e3a8a; color: #fff; font-weight: bold; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 13px;">2</div>
+            <div style="flex: 1;">
+              <h4 style="margin: 0 0 4px 0; color: #0f172a; font-size: 14px;">Pengisian Data Leger pada Excel</h4>
+              <p style="margin: 0 0 6px 0; color: #475569;">
+                Buka file Excel dan isikan data nilai siswa:
+              </p>
+              <ul style="margin: 0; padding-left: 18px; color: #475569;">
+                <li><strong>Identitas Wali & Jurusan:</strong> Tuliskan nama wali kelas, NIP, Program Keahlian, dan Konsentrasi Keahlian pada baris 4 hingga 7.</li>
+                <li><strong>Data Siswa:</strong> Isikan nomor urut, NIS/NISN, nama siswa, dan nilai pada kolom singkatan mata pelajaran yang bersangkutan.</li>
+                <li><strong>Nilai Kosong / 0:</strong> Siswa yang tidak memiliki nilai atau bernilai 0 otomatis divalidasi dengan status <em>"Tidak Mengikuti Ujian"</em>.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 14px; align-items: flex-start;">
+            <div style="background: #1e3a8a; color: #fff; font-weight: bold; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 13px;">3</div>
+            <div style="flex: 1;">
+              <h4 style="margin: 0 0 4px 0; color: #0f172a; font-size: 14px;">Impor File Excel ke Aplikasi</h4>
+              <p style="margin: 0; color: #475569;">
+                Klik tombol <strong>📁 Impor Excel</strong> di bilah navigasi dan pilih file leger Anda. Aplikasi akan langsung memproses seluruh data siswa, memetakan nilai ke kelompok mata pelajaran umum & kejuruan, serta menghitung <strong>Jumlah Nilai</strong> dan <strong>Rata-Rata Nilai</strong> secara instan.
+              </p>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 14px; align-items: flex-start;">
+            <div style="background: #1e3a8a; color: #fff; font-weight: bold; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 13px;">4</div>
+            <div style="flex: 1;">
+              <h4 style="margin: 0 0 4px 0; color: #0f172a; font-size: 14px;">Kustomisasi Melalui Menu Pengaturan (⚙️ Pengaturan)</h4>
+              <p style="margin: 0 0 6px 0; color: #475569;">
+                Gunakan menu pengaturan untuk menyesuaikan dokumen tanpa perlu mengubah kode:
+              </p>
+              <ul style="margin: 0; padding-left: 18px; color: #475569;">
+                <li><strong>Judul & Tahun Ajaran:</strong> Sesuaikan judul laporan dan tahun ajaran aktif.</li>
+                <li><strong>Sekolah & Keahlian:</strong> Edit nama sekolah, alamat, program keahlian, dan konsentrasi keahlian.</li>
+                <li><strong>Daftar Mata Pelajaran:</strong> Tambah mapel baru, ubah nama lengkap di rapor, atau hapus mapel yang tidak digunakan.</li>
+                <li><strong>Kriteria KKM:</strong> Tentukan nilai batas kelulusan (KKM) serta redaksi keterangan kompetensi.</li>
+                <li><strong>Tanda Tangan:</strong> Atur titimangsa tempat/tanggal, nama wali kelas, dan NIP.</li>
+                <li><strong>Penyimpanan:</strong> Klik <em>"Simpan ke Browser"</em> agar seluruh setelan tersimpan di memori perangkat Anda.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 14px; align-items: flex-start;">
+            <div style="background: #1e3a8a; color: #fff; font-weight: bold; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 13px;">5</div>
+            <div style="flex: 1;">
+              <h4 style="margin: 0 0 4px 0; color: #0f172a; font-size: 14px;">Memilih Siswa & Mencetak (🖨️ Cetak)</h4>
+              <p style="margin: 0 0 6px 0; color: #475569;">
+                Pilih opsi pada dropdown <strong>Siswa</strong>:
+              </p>
+              <ul style="margin: 0; padding-left: 18px; color: #475569;">
+                <li>Pilih <strong>nama salah satu siswa</strong> untuk mencetak rapor lembar individu.</li>
+                <li>Pilih <strong>-- Cetak Semua Siswa --</strong> untuk mencetak rapor satu kelas sekaligus (otomatis dipisah satu halaman per siswa).</li>
+                <li>Klik tombol <strong>🖨️ Cetak</strong> untuk membuka dialog cetak browser.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Tips Cetak -->
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px;">
+            <div style="font-weight: 700; color: #0f172a; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+              💡 Tips Hasil Cetak / PDF Maksimal:
+            </div>
+            <ul style="margin: 0; padding-left: 18px; color: #475569; font-size: 12.5px;">
+              <li><strong>Ukuran Kertas:</strong> Pilih ukuran <strong>Folio / F4</strong> (atau Legal / A4 sesuai kebutuhan).</li>
+              <li><strong>Margin:</strong> Pilih <strong>Default</strong> atau <strong>None / Minimum</strong>.</li>
+              <li><strong>Grafik Latar Belakang:</strong> Pastikan opsi <em>"Background graphics"</em> (Grafik latar belakang) dicentang agar border dan logo tercetak tajam.</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="modal-footer" style="justify-content: flex-end;">
+        <button class="btn-solid" onclick="closeTutorialModal()" style="background: #1e3a8a; padding: 7px 20px;">Mengerti & Tutup</button>
       </div>
     </div>
   </div>
@@ -1070,6 +1188,15 @@
         openConfigModal();
         renderSelectedStudent();
       }
+    }
+
+    // ================= FUNGSI MODAL TUTORIAL =================
+    function openTutorialModal() {
+      document.getElementById('tutorialModal').classList.add('active');
+    }
+
+    function closeTutorialModal() {
+      document.getElementById('tutorialModal').classList.remove('active');
     }
 
     // ================= RENDER DOKUMEN RAPOR =================
