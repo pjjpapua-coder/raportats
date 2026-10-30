@@ -409,6 +409,141 @@
     }
     .btn-solid:hover { background: #15803d; }
 
+    /* ================= AESTHETIC CUSTOM ALERT / MODAL ================= */
+    .aesthetic-alert-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: 20px;
+      animation: alertOverlayFadeIn 0.2s ease-out;
+    }
+
+    .aesthetic-alert-overlay.active {
+      display: flex;
+    }
+
+    @keyframes alertOverlayFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .aesthetic-alert-box {
+      background: #ffffff;
+      width: 100%;
+      max-width: 420px;
+      border-radius: 20px;
+      padding: 28px 24px 22px 24px;
+      text-align: center;
+      box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.35), 0 0 0 1px rgba(226, 232, 240, 0.9);
+      animation: alertBoxPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes alertBoxPop {
+      from { transform: scale(0.9) translateY(12px); opacity: 0; }
+      to { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    .aesthetic-alert-icon-wrap {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 16px auto;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      box-shadow: 0 10px 20px -6px rgba(0, 0, 0, 0.12);
+    }
+
+    .aesthetic-alert-icon-wrap.warning {
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      color: #d97706;
+      border: 2px solid #fcd34d;
+    }
+
+    .aesthetic-alert-icon-wrap.success {
+      background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+      color: #16a34a;
+      border: 2px solid #86efac;
+    }
+
+    .aesthetic-alert-icon-wrap.error {
+      background: linear-gradient(135deg, #fee2e2, #fecaca);
+      color: #dc2626;
+      border: 2px solid #fca5a5;
+    }
+
+    .aesthetic-alert-icon-wrap.info {
+      background: linear-gradient(135deg, #e0f2fe, #bae6fd);
+      color: #0284c7;
+      border: 2px solid #7dd3fc;
+    }
+
+    .aesthetic-alert-title {
+      margin: 0 0 8px 0;
+      font-size: 17px;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.2px;
+    }
+
+    .aesthetic-alert-message {
+      margin: 0 0 22px 0;
+      font-size: 13.5px;
+      color: #475569;
+      line-height: 1.6;
+    }
+
+    .aesthetic-alert-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .aesthetic-alert-btn {
+      padding: 9px 24px;
+      font-size: 13.5px;
+      font-weight: 600;
+      border-radius: 10px;
+      cursor: pointer;
+      border: none;
+      outline: none;
+      transition: all 0.18s ease;
+      font-family: inherit;
+    }
+
+    .aesthetic-alert-btn-primary {
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.28);
+    }
+
+    .aesthetic-alert-btn-primary:hover {
+      background: linear-gradient(135deg, #172554, #1d4ed8);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.38);
+    }
+
+    .aesthetic-alert-btn-cancel {
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #cbd5e1;
+    }
+
+    .aesthetic-alert-btn-cancel:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
     /* ================= HALAMAN RAPOR (A4 / FOLIO) ================= */
     .rapor-wrapper {
       padding: 25px 0;
@@ -603,7 +738,7 @@
         background: #fff !important;
       }
 
-      .no-print, .modal-overlay, .empty-banner {
+      .no-print, .modal-overlay, .empty-banner, .aesthetic-alert-overlay {
         display: none !important;
       }
 
@@ -634,6 +769,21 @@
   </style>
 </head>
 <body>
+
+  <!-- ================= KOTAK MODAL ALERT ESTETIK ================= -->
+  <div class="aesthetic-alert-overlay no-print" id="customAlertOverlay">
+    <div class="aesthetic-alert-box" id="customAlertBox">
+      <div class="aesthetic-alert-icon-wrap warning" id="customAlertIconWrap">
+        <span id="customAlertIcon">⚠️</span>
+      </div>
+      <h3 class="aesthetic-alert-title" id="customAlertTitle">Perhatian</h3>
+      <p class="aesthetic-alert-message" id="customAlertMessage">Pesan informasi</p>
+      <div class="aesthetic-alert-actions" id="customAlertActions">
+        <button class="aesthetic-alert-btn aesthetic-alert-btn-cancel" id="customAlertCancelBtn" onclick="cancelAestheticConfirm()" style="display: none;">Batal</button>
+        <button class="aesthetic-alert-btn aesthetic-alert-btn-primary" id="customAlertOkBtn" onclick="closeAestheticAlert()">Oke, Mengerti</button>
+      </div>
+    </div>
+  </div>
 
   <!-- ================= CONTROL PANEL WARNA HITAM ================= -->
   <div class="no-print">
@@ -674,7 +824,6 @@
           ⚙️ Pengaturan
         </button>
 
-        <!-- Icon Tanpa Bingkai dan Tanpa Label untuk Tutorial -->
         <button class="btn-frameless text-slate" onclick="openTutorialModal()" title="Panduan & Tutorial Penggunaan Aplikasi" aria-label="Tutorial" style="padding: 6px 8px;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"></circle>
@@ -851,13 +1000,11 @@
       </div>
 
       <div class="modal-body" style="padding: 20px 24px; gap: 20px; font-size: 13.5px; line-height: 1.6; color: #334155;">
-        <!-- Intro -->
         <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 12px 16px; border-radius: 0 8px 8px 0;">
           <strong>Selamat datang di Raport ATS Creator!</strong><br>
           Aplikasi ini dirancang untuk memudahkan bapak/ibu guru dan wali kelas dalam mengonversi data nilai dari leger Excel secara otomatis menjadi lembaran Rapor Penilaian Asesmen Tengah Semester (ATS) yang siap dicetak maupun disimpan ke format PDF.
         </div>
 
-        <!-- Langkah-langkah -->
         <div style="display: flex; flex-direction: column; gap: 16px;">
           
           <div style="display: flex; gap: 14px; align-items: flex-start;">
@@ -928,7 +1075,6 @@
             </div>
           </div>
 
-          <!-- Tips Cetak -->
           <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px;">
             <div style="font-weight: 700; color: #0f172a; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
               💡 Tips Hasil Cetak / PDF Maksimal:
@@ -1027,7 +1173,7 @@
 
     function handlePrintButtonClick() {
       if (studentsData.length === 0) {
-        alert("Perhatian: Data nilai masih kosong! Silakan impor file Excel leger terlebih dahulu sebelum mencetak.");
+        showAestheticAlert("Data Nilai Masih Kosong", "Silakan impor file Excel leger terlebih dahulu sebelum mencetak rapor.", "warning");
         return;
       }
       window.print();
@@ -1178,17 +1324,88 @@
       saveConfigToStorage();
       closeConfigModal();
       renderSelectedStudent();
-      alert("✅ Pengaturan berhasil disimpan ke browser!");
+      showAestheticAlert("Pengaturan Disimpan", "Seluruh konfigurasi dan daftar mata pelajaran berhasil disimpan ke browser!", "success");
     }
 
     function resetConfigToDefault() {
-      if (confirm("Kembalikan semua pengaturan dan daftar mata pelajaran ke format awal?")) {
+      showAestheticConfirm("Kembalikan Default?", "Apakah Anda yakin ingin mengembalikan seluruh pengaturan dan mata pelajaran ke format awal?", () => {
         appConfig = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
         localStorage.removeItem('rapor_custom_settings');
         openConfigModal();
         renderSelectedStudent();
+      });
+    }
+
+    // ================= SISTEM ALERT & CONFIRM ESTETIK =================
+    let alertConfirmCallback = null;
+
+    function showAestheticAlert(title, message, type = 'warning') {
+      const overlay = document.getElementById('customAlertOverlay');
+      const iconWrap = document.getElementById('customAlertIconWrap');
+      const iconEl = document.getElementById('customAlertIcon');
+      const titleEl = document.getElementById('customAlertTitle');
+      const msgEl = document.getElementById('customAlertMessage');
+      const cancelBtn = document.getElementById('customAlertCancelBtn');
+      const okBtn = document.getElementById('customAlertOkBtn');
+
+      iconWrap.className = 'aesthetic-alert-icon-wrap ' + type;
+      if (type === 'warning') iconEl.textContent = '⚠️';
+      else if (type === 'success') iconEl.textContent = '✅';
+      else if (type === 'error') iconEl.textContent = '❌';
+      else iconEl.textContent = 'ℹ️';
+
+      titleEl.textContent = title;
+      msgEl.innerHTML = message;
+      cancelBtn.style.display = 'none';
+      okBtn.textContent = 'Oke, Mengerti';
+      alertConfirmCallback = null;
+
+      overlay.classList.add('active');
+    }
+
+    function showAestheticConfirm(title, message, onConfirm, type = 'warning') {
+      const overlay = document.getElementById('customAlertOverlay');
+      const iconWrap = document.getElementById('customAlertIconWrap');
+      const iconEl = document.getElementById('customAlertIcon');
+      const titleEl = document.getElementById('customAlertTitle');
+      const msgEl = document.getElementById('customAlertMessage');
+      const cancelBtn = document.getElementById('customAlertCancelBtn');
+      const okBtn = document.getElementById('customAlertOkBtn');
+
+      iconWrap.className = 'aesthetic-alert-icon-wrap ' + type;
+      if (type === 'warning') iconEl.textContent = '⚠️';
+      else if (type === 'success') iconEl.textContent = '✅';
+      else if (type === 'error') iconEl.textContent = '❌';
+      else iconEl.textContent = '❓';
+
+      titleEl.textContent = title;
+      msgEl.innerHTML = message;
+      cancelBtn.style.display = 'inline-block';
+      okBtn.textContent = 'Ya, Lanjutkan';
+      alertConfirmCallback = onConfirm;
+
+      overlay.classList.add('active');
+    }
+
+    function closeAestheticAlert() {
+      const overlay = document.getElementById('customAlertOverlay');
+      overlay.classList.remove('active');
+      if (typeof alertConfirmCallback === 'function') {
+        alertConfirmCallback();
+        alertConfirmCallback = null;
       }
     }
+
+    function cancelAestheticConfirm() {
+      const overlay = document.getElementById('customAlertOverlay');
+      overlay.classList.remove('active');
+      alertConfirmCallback = null;
+    }
+
+    // Override alert bawaan browser agar selalu estetik
+    window.alert = function(msg) {
+      showAestheticAlert("Pemberitahuan", msg, "info");
+    };
 
     // ================= FUNGSI MODAL TUTORIAL =================
     function openTutorialModal() {
@@ -1451,7 +1668,7 @@
           parseExcelData(rawData, file.name);
         } catch (err) {
           console.error(err);
-          alert("Gagal membaca file Excel. Pastikan format tabel sesuai!");
+          showAestheticAlert("Gagal Membaca File", "Format file Excel tidak sesuai. Pastikan file berformat <strong>.xlsx</strong> dengan struktur leger yang benar!", "error");
           fileStatusBadge.className = 'status-badge empty';
           fileStatusBadge.textContent = "Format tidak valid!";
         }
@@ -1486,7 +1703,7 @@
       }
 
       if (headerIdx === -1) {
-        alert("Tidak dapat menemukan baris nama kolom mata pelajaran di Excel!");
+        showAestheticAlert("Format Tidak Dikenali", "Tidak dapat menemukan baris nama kolom mata pelajaran (AGAMA, PKN, dll) pada file Excel!", "error");
         return;
       }
 
